@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Billing System</title>
+    <style>
+        .pp{
+            text-align: center;
+            background-image: url(_\ \(10\).jpeg);
+            background-size: 1500px;
+        }
+        
+    </style>
+</head>
+<body class="pp">
+    <h2>Hotel Billing System</h2>
+
+    <label>
+        Room type:
+        <select id="roomtype">
+            <option value="single">Single (Rs.1080 per night)</option>
+            <option value="double">Double (Rs.2080 per night)</option>
+            <option value="triple">Suite (Rs.2000 per night)</option>
+        </select>
+    </label>
+
+    <br><br>
+
+    <label>Number of nights:
+        <input id="nights" type="number" value="1" min="1">
+    </label>
+
+    <br><br>
+
+    <label><input type="checkbox" id="breakfast"> Breakfast (Rs.250 per day)</label><br>
+    <label><input type="checkbox" id="airport"> Airport Pickup (Rs.1950)</label><br>
+    <label><input type="checkbox" id="laundry"> Laundry (Rs.550)</label><br><br>
+
+    <button id="calculate" style="background-color: bisque; cursor: pointer;">Calculate Bill</button>
+
+    <h3>Invoice</h3>
+    <pre id="Invoice"></pre>
+
+    <script >
+        const roomtype = document.getElementById('roomtype');
+        const nights = document.getElementById('nights');
+        const breakfast = document.getElementById('breakfast');
+        const airport = document.getElementById('airport');
+        const laundry = document.getElementById('laundry');
+        const calculate = document.getElementById('calculate');
+        const Invoice = document.getElementById('Invoice');
+
+        // FIXED: Correct object format
+        const roomprices = {
+            single: 1080,
+            double: 2080,
+            triple: 2000
+        };
+
+        calculate.addEventListener('click', function () {
+            const n = Number(nights.value);
+
+            if (Number.isNaN(n) || n < 1) {
+                Invoice.textContent = 'Sorry! Nights must be >= 1.';
+                return;
+            }
+
+            const selectedRoom = roomtype.value;
+            const roomRate = roomprices[selectedRoom];
+            const roomcost = roomRate * n;
+
+            // FIXED: .checked not .Checked
+            const breakfastcost = breakfast.checked ? 250 * n : 0;
+            const airportcost = airport.checked ? 1950 : 0;
+            const laundrycost = laundry.checked ? 550 : 0;
+
+            const subtotal = roomcost + breakfastcost + airportcost + laundrycost;
+            const tax = Math.round(subtotal * 0.12);
+            const grandtotal = subtotal + tax;
+
+            // FIXED: Template string syntax
+            let txt = '';
+            txt +=`Room Type: ${selectedRoom} @ Rs.${roomRate}/night\n`;
+            txt +=`Nights: ${n}\n`;
+            txt +=`Room Cost: Rs.${roomcost}\n\n`;
+            txt +=`Breakfast: Rs.${breakfastcost}\n`;
+            txt +=`Airport Pickup: Rs.${airportcost}\n`;
+            txt +=`Laundry: Rs.${laundrycost}\n`;
+            txt +=`Subtotal: Rs.${subtotal}\n`;
+            txt +=`Tax (12%): Rs.${tax}\n`;
+            txt +=`Grand Total: Rs.${grandtotal}\n`;
+
+            Invoice.textContent = txt;
+        });
+    </script>
+
+</body>
+</html>
